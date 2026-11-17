@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4338ca">
+<title>Aprende Web</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#f3f4f9;--card:#fff;--tx:#1b1f3b;--mut:#626785;--pri:#4338ca;--ok:#15803d;--bd:#dcdfee;--code:#0f172a;--codetx:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1020;--card:#181a33;--tx:#e8eaff;--mut:#9aa0c7;--pri:#8b8dff;--ok:#4ade80;--bd:#2b2e55;--code:#0a0b18;--codetx:#e2e8f0}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--pri);color:#fff}
+header h1{font-size:1.1rem;margin:0;flex:1}
+header button{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+.grid{display:grid;gap:12px;padding:12px;max-width:1200px;margin:0 auto}
+@media (min-width:900px){.grid{grid-template-columns:1fr 1fr}.leccion{grid-column:1/3}}
+.panel{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.badge{display:inline-block;font-size:.75rem;font-weight:700;color:#fff;background:var(--pri);padding:2px 10px;border-radius:99px}
+.badge.CSS{background:#0e7490}.badge.JavaScript{background:#b45309}.badge.Libre{background:#6b21a8}
+h2{margin:8px 0}
+.teoria{line-height:1.5}
+.teoria code,.tarea code{background:var(--bg);border:1px solid var(--bd);padding:1px 5px;border-radius:5px;font-size:.9em}
+.tarea{margin-top:10px;padding:10px 12px;border-left:4px solid var(--ok);background:var(--bg);border-radius:6px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button.b{font:inherit;padding:9px 14px;border-radius:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+button.p{background:var(--pri);color:#fff;border-color:var(--pri)}
+button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.tabs{display:flex;gap:6px;margin-bottom:8px}
+.tabs button{flex:1;font:inherit;font-weight:700;padding:8px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--mut);cursor:pointer}
+.tabs button.on{background:var(--code);color:#fff;border-color:var(--code)}
+textarea{width:100%;height:280px;resize:vertical;background:var(--code);color:var(--codetx);border:none;border-radius:10px;padding:12px;font-family:Consolas,Menlo,monospace;font-size:14px;line-height:1.5;tab-size:2}
+.prevh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:700}
+iframe{width:100%;height:280px;border:1px solid var(--bd);border-radius:10px;background:#fff}
+#consola{margin-top:8px;background:var(--code);color:var(--codetx);border-radius:10px;padding:8px 12px;font-family:Consolas,Menlo,monospace;font-size:13px;min-height:44px;max-height:120px;overflow:auto;white-space:pre-wrap}
+#consola .e{color:#fca5a5}
+#consola small{color:#94a3b8}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:9}
+.overlay.on{display:block}
+.drawer{position:absolute;left:0;top:0;bottom:0;width:min(330px,88vw);background:var(--card);padding:14px;overflow:auto}
+.drawer h3{margin:14px 0 6px;font-size:.85rem;color:var(--mut);text-transform:uppercase}
+.drawer button{display:flex;width:100%;text-align:left;gap:8px;font:inherit;padding:10px;margin-bottom:4px;border-radius:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+.drawer button.on{border-color:var(--pri);background:var(--bg)}
+.drawer button span{flex:1}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--ok);width:0}
+</style>
+</head>
+<body>
+<header>
+  <button id="menu" aria-label="Lecciones">📚 Lecciones</button>
+  <h1>Aprende Web</h1>
+  <button id="instalar" style="display:none">Instalar</button>
+</header>
+
+<div class="overlay" id="overlay">
+  <div class="drawer" id="drawer">
+    <strong>Tu progreso</strong>
+    <div class="bar"><i id="barra"></i></div>
+    <small id="progtxt" style="color:var(--mut)"></small>
+    <div id="indice"></div>
+  </div>
+</div>
+
+<div class="grid">
+  <section class="panel leccion">
+    <span class="badge" id="cat"></span>
+    <h2 id="titulo"></h2>
+    <div class="teoria" id="teoria"></div>
+    <div class="tarea" id="tarea"></div>
+    <div class="btns">
+      <button class="b" id="bSol">👀 Ver solución</button>
+      <button class="b" id="bReset">↺ Reiniciar</button>
+      <button class="b ok" id="bHecha">✔ Marcar completada</button>
+      <button class="b p" id="bSig">Siguiente →</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="tabs">
+      <button data-t="html" class="on">HTML</button>
+      <button data-t="css">CSS</button>
+      <button data-t="js">JS</button>
+    </div>
+    <textarea id="editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+  </section>
+
+  <section class="panel">
+    <div class="prevh"><span>Resultado</span><button class="b p" id="bRun">▶ Ejecutar</button></div>
+    <iframe id="vista" sandbox="allow-scripts allow-modals" title="Vista previa"></iframe>
+    <div id="consola"><small>Consola: aquí verás los console.log y los errores.</small></div>
+  </section>
+</div>
+
+<script>
+var KEY = 'aprendeWeb.v1';
+
+var LECCIONES = [
+{ id:'h1', cat:'HTML', titulo:'1. Tu primera página',
+  teoria:'HTML es el <b>esqueleto</b> de una página. Se escribe con etiquetas: <code>&lt;h1&gt;</code> es un título grande y <code>&lt;p&gt;</code> un párrafo. Casi todas se abren y se cierran: <code>&lt;p&gt;Hola&lt;/p&gt;</code>.',
+  tarea:'Cambia el título por tu nombre y agrega un párrafo (<code>&lt;p&gt;</code>) que diga qué quieres aprender.',
+  ini:{html:'<h1>Hola mundo</h1>',css:'',js:''},
+  sol:{html:'<h1>Soy Ana</h1>\n<p>Quiero aprender a crear páginas web.</p>',css:'',js:''} },
+
+{ id:'h2', cat:'HTML', titulo:'2. Enlaces e imágenes',
+  teoria:'Un enlace usa <code>&lt;a href="dirección"&gt;texto&lt;/a&gt;</code>. Una imagen usa <code>&lt;img src="dirección" width="150"&gt;</code> (no se cierra).',
+  tarea:'Agrega un enlace a <code>https://es.wikipedia.org</code> con el texto "Wikipedia" y una imagen con la dirección <code>https://picsum.photos/200</code>.',
+  ini:{html:'<h1>Mis favoritos</h1>\n',css:'',js:''},
+  sol:{html:'<h1>Mis favoritos</h1>\n<a href="https://es.wikipedia.org">Wikipedia</a>\n<br>\n<img src="https://picsum.photos/200" width="150">',css:'',js:''} },
+
+{ id:'h3', cat:'HTML', titulo:'3. Listas',
+  teoria:'Una lista con viñetas es <code>&lt;ul&gt;</code> y cada elemento va en un <code>&lt;li&gt;</code>. Si quieres números, usa <code>&lt;ol&gt;</code>.',
+  tarea:'Crea una lista con tus 3 comidas favoritas.',
+  ini:{html:'<h2>Mis comidas favoritas</h2>\n',css:'',js:''},
+  sol:{html:'<h2>Mis comidas favoritas</h2>\n<ul>\n  <li>Pizza</li>\n  <li>Arroz con pollo</li>\n  <li>Mangú</li>\n</ul>',css:'',js:''} },
+
+{ id:'c1', cat:'CSS', titulo:'4. Colores y fuentes',
+  teoria:'CSS es la <b>ropa</b> de la página. Se escribe: <code>etiqueta { propiedad: valor; }</code>. Por ejemplo <code>color</code> cambia el color del texto y <code>font-size</code> el tamaño.',
+  tarea:'Haz que el <code>h1</code> sea de color azul (<code>blue</code>) y que los párrafos tengan <code>font-size: 20px</code>.',
+  ini:{html:'<h1>Mi título</h1>\n<p>Un párrafo de ejemplo.</p>',css:'h1 {\n  \n}\n\np {\n  \n}',js:''},
+  sol:{html:'<h1>Mi título</h1>\n<p>Un párrafo de ejemplo.</p>',css:'h1 {\n  color: blue;\n}\n\np {\n  font-size: 20px;\n}',js:''} },
+
+{ id:'c2', cat:'CSS', titulo:'5. Cajas: padding, margin y borde',
+  teoria:'Todo en una página es una caja. <code>padding</code> es el espacio por dentro, <code>margin</code> por fuera, <code>border</code> el borde y <code>border-radius</code> redondea las esquinas. Una <b>clase</b> se escribe con punto: <code>.caja { }</code>.',
+  tarea:'Dale a <code>.caja</code> un fondo amarillo claro (<code>background: #fef08a</code>), <code>padding: 20px</code>, un borde de 2px sólido y esquinas redondeadas de 12px.',
+  ini:{html:'<div class="caja">Soy una caja</div>',css:'.caja {\n  \n}',js:''},
+  sol:{html:'<div class="caja">Soy una caja</div>',css:'.caja {\n  background: #fef08a;\n  padding: 20px;\n  border: 2px solid black;\n  border-radius: 12px;\n}',js:''} },
+
+{ id:'c3', cat:'CSS', titulo:'6. Flexbox: ordenar elementos',
+  teoria:'<code>display: flex</code> pone los elementos hijos en fila. Con <code>gap</code> les das separación y con <code>justify-content: center</code> los centras.',
+  tarea:'En <code>.fila</code> usa <code>display: flex</code>, <code>gap: 10px</code> y <code>justify-content: center</code>.',
+  ini:{html:'<div class="fila">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>',css:'.item {\n  background: #6366f1;\n  color: white;\n  padding: 20px;\n  border-radius: 8px;\n}\n\n.fila {\n  \n}',js:''},
+  sol:{html:'<div class="fila">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>',css:'.item {\n  background: #6366f1;\n  color: white;\n  padding: 20px;\n  border-radius: 8px;\n}\n\n.fila {\n  display: flex;\n  gap: 10px;\n  justify-content: center;\n}',js:''} },
+
+{ id:'j1', cat:'JavaScript', titulo:'7. Variables y consola',
+  teoria:'JavaScript es el <b>cerebro</b>: hace que la página reaccione. Una variable guarda un dato: <code>let nombre = "Ana";</code>. Con <code>console.log(...)</code> escribes en la consola (el cuadro negro de abajo). Presiona ▶ Ejecutar para ver el resultado.',
+  tarea:'Crea una variable <code>edad</code> con tu edad y muestra con <code>console.log</code> el mensaje: "Tengo ... años" usando <code>+</code> para unir textos.',
+  ini:{html:'',css:'',js:'let nombre = "Ana";\nconsole.log("Hola " + nombre);\n'},
+  sol:{html:'',css:'',js:'let nombre = "Ana";\nlet edad = 25;\nconsole.log("Hola " + nombre);\nconsole.log("Tengo " + edad + " años");'} },
+
+{ id:'j2', cat:'JavaScript', titulo:'8. Botones y eventos',
+  teoria:'Un <b>evento</b> es algo que hace el usuario, como un clic. Con <code>document.getElementById("id")</code> buscas un elemento y con <code>addEventListener("click", función)</code> le dices qué hacer al hacer clic. <code>textContent</code> cambia su texto.',
+  tarea:'Completa el código para que al pulsar el botón el texto cambie a "¡Funciona!". Recuerda pulsar ▶ Ejecutar.',
+  ini:{html:'<button id="boton">Púlsame</button>\n<p id="mensaje">Aún no has pulsado nada.</p>',css:'',js:'var boton = document.getElementById("boton");\nvar mensaje = document.getElementById("mensaje");\n\nboton.addEventListener("click", function () {\n  \n});'},
+  sol:{html:'<button id="boton">Púlsame</button>\n<p id="mensaje">Aún no has pulsado nada.</p>',css:'',js:'var boton = document.getElementById("boton");\nvar mensaje = document.getElementById("mensaje");\n\nboton.addEventListener("click", function () {\n  mensaje.textContent = "¡Funciona!";\n});'} },
+
+{ id:'j3', cat:'JavaScript', titulo:'9. Decisiones con if',
+  teoria:'<code>if (condición) { ... } else { ... }</code> permite que el programa decida. Comparas con <code>&gt;</code>, <code>&lt;</code>, <code>===</code>.',
+  tarea:'Cambia el valor de <code>edad</code> y comprueba el mensaje. Luego agrega otra condición: si la edad es menor de 13, que diga "Eres un niño".',
+  ini:{html:'<p id="resultado"></p>',css:'',js:'var edad = 20;\nvar r = document.getElementById("resultado");\n\nif (edad >= 18) {\n  r.textContent = "Eres mayor de edad";\n} else {\n  r.textContent = "Eres menor de edad";\n}'},
+  sol:{html:'<p id="resultado"></p>',css:'',js:'var edad = 10;\nvar r = document.getElementById("resultado");\n\nif (edad >= 18) {\n  r.textContent = "Eres mayor de edad";\n} else if (edad < 13) {\n  r.textContent = "Eres un niño";\n} else {\n  r.textContent = "Eres adolescente";\n}'} },
+
+{ id:'j4', cat:'JavaScript', titulo:'10. Listas y bucles',
+  teoria:'Una lista de datos se llama <b>array</b>: <code>["a","b","c"]</code>. Un bucle <code>for</code> repite una acción por cada elemento. Con <code>createElement</code> creas etiquetas nuevas y con <code>appendChild</code> las agregas a la página.',
+  tarea:'Agrega 2 frutas más al array y ejecuta para ver cómo la lista crece sola.',
+  ini:{html:'<ul id="lista"></ul>',css:'',js:'var frutas = ["Mango", "Piña"];\nvar lista = document.getElementById("lista");\n\nfor (var i = 0; i < frutas.length; i++) {\n  var li = document.createElement("li");\n  li.textContent = frutas[i];\n  lista.appendChild(li);\n}'},
+  sol:{html:'<ul id="lista"></ul>',css:'',js:'var frutas = ["Mango", "Piña", "Guayaba", "Chinola"];\nvar lista = document.getElementById("lista");\n\nfor (var i = 0; i < frutas.length; i++) {\n  var li = document.createElement("li");\n  li.textContent = frutas[i];\n  lista.appendChild(li);\n}'} },
+
+{ id:'p1', cat:'Libre', titulo:'11. Proyecto: tu tarjeta de presentación',
+  teoria:'¡Hora de juntar todo! Crea una tarjeta con tu nombre, una descripción y un botón que muestre un mensaje.',
+  tarea:'Usa HTML para la estructura, CSS para que se vea bonita (colores, padding, bordes redondeados) y JavaScript para que el botón muestre un saludo.',
+  ini:{html:'<div class="tarjeta">\n  <h1>Tu nombre</h1>\n  <p>Cuéntanos algo sobre ti.</p>\n  <button id="saludo">Saludar</button>\n  <p id="msg"></p>\n</div>',css:'body {\n  font-family: sans-serif;\n  background: #e0e7ff;\n}\n\n.tarjeta {\n  \n}',js:'document.getElementById("saludo").addEventListener("click", function () {\n  \n});'},
+  sol:{html:'<div class="tarjeta">\n  <h1>Ana Pérez</h1>\n  <p>Aprendiendo a programar páginas web.</p>\n  <button id="saludo">Saludar</button>\n  <p id="msg"></p>\n</div>',css:'body {\n  font-family: sans-serif;\n  background: #e0e7ff;\n}\n\n.tarjeta {\n  max-width: 300px;\n  margin: 30px auto;\n  padding: 24px;\n  background: white;\n  border-radius: 16px;\n  text-align: center;\n  box-shadow: 0 4px 14px rgba(0,0,0,.15);\n}\n\nbutton {\n  background: #4338ca;\n  color: white;\n  border: none;\n  padding: 10px 18px;\n  border-radius: 8px;\n}',js:'document.getElementById("saludo").addEventListener("click", function () {\n  document.getElementById("msg").textContent = "¡Hola! Bienvenido a mi tarjeta 👋";\n});'} }
+];
+
+var LIBRE = { id:'libre', cat:'Libre', titulo:'Zona libre',
+  teoria:'Aquí no hay reglas: escribe HTML, CSS y JavaScript y prueba lo que quieras. Tu código se guarda solo.',
+  tarea:'Reto: crea una página con un título, una imagen y un botón que cambie el color del fondo.',
+  ini:{html:'<h1>Mi página</h1>\n<button id="b">Cambiar color</button>',css:'body {\n  font-family: sans-serif;\n}',js:'document.getElementById("b").addEventListener("click", function () {\n  document.body.style.background = "lightblue";\n});'},
+  sol:null };
+
+var state = cargar();
+var actual = LECCIONES[0];
+var pestana = 'html';
+var timer = null;
+
+function cargar(){
+  try { var d = JSON.parse(localStorage.getItem(KEY)); if (d && d.codes) return d; } catch(e){}
+  return { codes:{}, hechas:{}, ultima:'h1' };
+}
+function guardar(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+function $(id){ return document.getElementById(id); }
+
+function codigo(){
+  if (!state.codes[actual.id]) state.codes[actual.id] = { html:actual.ini.html, css:actual.ini.css, js:actual.ini.js };
+  return state.codes[actual.id];
+}
+
+function abrir(l){
+  actual = l; state.ultima = l.id; guardar();
+  $('cat').textContent = l.cat; $('cat').className = 'badge ' + l.cat;
+  $('titulo').textContent = l.titulo;
+  $('teoria').innerHTML = l.teoria;
+  $('tarea').innerHTML = '<b>🎯 Tu tarea:</b> ' + l.tarea;
+  $('bSol').style.display = l.sol ? '' : 'none';
+  $('bHecha').style.display = l.id === 'libre' ? 'none' : '';
+  $('bHecha').textContent = state.hechas[l.id] ? '✔ Completada' : '✔ Marcar completada';
+  cambiarPestana('html');
+  limpiarConsola();
+  ejecutar();
+  pintarIndice();
+  window.scrollTo(0, 0);
+}
+
+function cambiarPestana(t){
+  pestana = t;
+  var bs = document.querySelectorAll('.tabs button');
+  for (var i = 0; i < bs.length; i++) bs[i].className = bs[i].getAttribute('data-t') === t ? 'on' : '';
+  $('editor').value = codigo()[t];
+}
+
+function limpiarConsola(){ $('consola').innerHTML = '<small>Consola: aquí verás los console.log y los errores.</small>'; }
+function escribirConsola(txt, error){
+  var c = $('consola');
+  if (c.firstChild && c.firstChild.tagName === 'SMALL') c.innerHTML = '';
+  var d = document.createElement('div');
+  if (error) d.className = 'e';
+  d.textContent = (error ? '⚠ ' : '› ') + txt;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+
+function ejecutar(){
+  limpiarConsola();
+  var c = codigo();
+  var espia = '<scr' + 'ipt>(function(){function s(t,m){parent.postMessage({tipo:t,msg:String(m)},"*")}' +
+    'window.onerror=function(m){s("error",m)};' +
+    'console.log=function(){s("log",[].slice.call(arguments).join(" "))};})();<\/scr' + 'ipt>';
+  var doc = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<style>body{font-family:sans-serif;margin:12px}</style><style>' + c.css + '</style>' + espia + '</head><body>' +
+    c.html + '<scr' + 'ipt>' + c.js + '<\/scr' + 'ipt></body></html>';
+  $('vista').srcdoc = doc;
+}
+
+window.addEventListener('message', function(e){
+  if (e.source !== $('vista').contentWindow || !e.data) return;
+  escribirConsola(e.data.msg, e.data.tipo === 'error');
+});
+
+$('editor').addEventListener('input', function(){
+  codigo()[pestana] = this.value; guardar();
+  if (pestana !== 'js') { clearTimeout(timer); timer = setTimeout(ejecutar, 600); }
+});
+$('editor').addEventListener('keydown', function(e){
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    var s = this.selectionStart;
+    this.value = this.value.slice(0, s) + '  ' + this.value.slice(this.selectionEnd);
+    this.selectionStart = this.selectionEnd = s + 2;
+    this.dispatchEvent(new Event('input'));
+  }
+});
+var tabs = document.querySelectorAll('.tabs button');
+for (var i = 0; i < tabs.length; i++) {
+  tabs[i].onclick = function(){ cambiarPestana(this.getAttribute('data-t')); };
+}
+$('bRun').onclick = ejecutar;
+$('bReset').onclick = function(){
+  if (confirm('¿Volver al código inicial de esta lección?')) {
+    delete state.codes[actual.id]; guardar(); cambiarPestana(pestana); ejecutar();
+  }
+};
+$('bSol').onclick = function(){
+  if (confirm('¿Seguro? Intenta primero por tu cuenta. Se reemplazará tu código por la solución.')) {
+    state.codes[actual.id] = { html:actual.sol.html, css:actual.sol.css, js:actual.sol.js };
+    guardar(); cambiarPestana(pestana); ejecutar();
+  }
+};
+$('bHecha').onclick = function(){
+  state.hechas[actual.id] = !state.hechas[actual.id]; guardar();
+  this.textContent = state.hechas[actual.id] ? '✔ Completada' : '✔ Marcar completada';
+  pintarIndice();
+};
+$('bSig').onclick = function(){
+  var i = LECCIONES.indexOf(actual);
+  abrir(i >= 0 && i < LECCIONES.length - 1 ? LECCIONES[i + 1] : LIBRE);
+};
+
+// Menú de lecciones
+$('menu').onclick = function(){ $('overlay').classList.add('on'); };
+$('overlay').onclick = function(e){ if (e.target === this) this.classList.remove('on'); };
+
+function pintarIndice(){
+  var cont = $('indice'); cont.innerHTML = '';
+  var grupo = '';
+  LECCIONES.concat([LIBRE]).forEach(function(l){
+    if (l.cat !== grupo) { grupo = l.cat; var h = document.createElement('h3'); h.textContent = grupo; cont.appendChild(h); }
+    var b = document.createElement('button');
+    if (l.id === actual.id) b.className = 'on';
+    var t = document.createElement('span'); t.textContent = l.titulo;
+    var ic = document.createElement('span'); ic.style.flex = '0'; ic.textContent = state.hechas[l.id] ? '✅' : '';
+    b.appendChild(t); b.appendChild(ic);
+    b.onclick = function(){ $('overlay').classList.remove('on'); abrir(l); };
+    cont.appendChild(b);
+  });
+  var hechas = LECCIONES.filter(function(l){ return state.hechas[l.id]; }).length;
+  $('barra').style.width = Math.round(hechas / LECCIONES.length * 100) + '%';
+  $('progtxt').textContent = hechas + ' de ' + LECCIONES.length + ' lecciones completadas';
+}
+
+// Instalar como app
+var promptInstalar = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); promptInstalar = e; $('instalar').style.display = '';
+});
+$('instalar').onclick = function(){
+  if (promptInstalar) { promptInstalar.prompt(); promptInstalar = null; this.style.display = 'none'; }
+};
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+
+// Inicio
+var inicial = LECCIONES.filter(function(l){ return l.id === state.ultima; })[0] || (state.ultima === 'libre' ? LIBRE : LECCIONES[0]);
+abrir(inicial);
+</script>
+</body>
+</html>
